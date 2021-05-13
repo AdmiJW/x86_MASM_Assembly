@@ -1,6 +1,16 @@
 
 TITLE String Reversal in Assembly
 
+;Write a program using the LOOP instruction with indirect addressing that copies a string from
+;source to target, reversing the character order in the process. Use the following variables:
+;			source BYTE "This is the source string",O
+;			target BYTE SIZEOF source DUP(O)
+;If your program works correctly, you will see the following sequence of hexadec imal bytes on
+;the screen when the program runs:
+;			67 6E 69 72 74 73 20 65 63 72 75 6F 73 20 65 68
+;			74 20 73 69 20 73 69 68 54
+
+;================================================================================================
 ;	To perform string reversal in Assembly, we have to make use of two indices
 ;	Although can be done using one, probably
 ;	Use ESI (Source Index) for source pointer, EDI (Destination Index) as destination pointer
@@ -24,7 +34,7 @@ INCLUDE Irvine32.inc
 	target BYTE SIZEOF source DUP(?)			;Since it is ASCII taking 1 byte each char, SIZEOF == LENGTHOF
 
 .code
-reversal PROC 
+exercise4_8 PROC 
 	;===================================================================
 	;	Phase 1: Initialize Counters, Source Index, Destination Index
 	;===================================================================
@@ -57,5 +67,5 @@ reversal PROC
 	call DumpMem
 
 	ret
-reversal ENDP 
+exercise4_8 ENDP 
 END

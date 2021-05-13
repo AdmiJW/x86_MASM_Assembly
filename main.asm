@@ -18,7 +18,8 @@
 TITLE Main Program
 
 INCLUDE Irvine32.inc
-INCLUDE include_all.inc
+INCLUDE Macros.inc
+INCLUDE exercise_chap4.inc
 
 ;To include external assembly, you must include the inc file
 
@@ -29,10 +30,10 @@ INCLUDE include_all.inc
 
 .code
 main PROC
-	;...Codes
+	;Codes...
 
-	CALL exercise4_4
-
+	CALL exercise4_8
+	
 	exit
 main ENDP
 END main
