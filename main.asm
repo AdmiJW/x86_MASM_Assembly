@@ -12,15 +12,23 @@
 ;		3.	Include the inc inside this main assembly source file
 ;================================================================================================================
 
-
+;===================================================
+;	Flags and its Abbrevations in Visual Studio
+;===================================================
+;| Overflow  | OV |
+;| Direction | UP |
+;| Interrupt | EI |
+;| Sign      | PL |
+;| Zero      | ZR |
+;| Auxiliary | AC |
+;| Parity    | PE |
+;| Carry     | CY |
 
 
 TITLE Main Program
 
 INCLUDE Irvine32.inc
-INCLUDE Macros.inc
-INCLUDE exercise_chap5.inc
-
+INCLUDE exercise_chap6.inc
 ;To include external assembly, you must include the inc file
 
 .data
@@ -32,8 +40,7 @@ INCLUDE exercise_chap5.inc
 .code
 main PROC
 	;Codes...
-	CALL exercise5_8
-
+	CALL exercise6_4
 	exit
 main ENDP
 END main
