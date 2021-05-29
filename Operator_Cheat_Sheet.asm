@@ -90,6 +90,7 @@ TITLE Operator Cheat Sheet
 ;
 ;	LAHF - Load Status Flags into AH. (Sign, Zero, Auxiliary carry, Parity, Carry)
 ;	SAHF - Saves AH into EFLAGS register.
+;		Opertation: SF:ZF:xx:AF:xx:PF:xx:CF -> AH
 ;		+ LAHF
 ;		+ SAHF
 ;
@@ -430,6 +431,4 @@ TITLE Operator Cheat Sheet
 ;			statements
 ;		  .ENDW
 ;
-
-
 END

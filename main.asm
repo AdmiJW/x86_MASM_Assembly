@@ -40,13 +40,9 @@ INCLUDE exercise_chap6.inc
 .code
 main PROC
 	;Codes...
-	CALL exercise6_4
+	CALL exercise6_9
+
+
 	exit
 main ENDP
 END main
-
-
-
-
-
-
