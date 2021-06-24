@@ -28,7 +28,7 @@ TITLE Operator Cheat Sheet
 ;		>	REAL8	- 64 bit IEEE long real (double precision)
 ;		>	REAL10	- 80 bit IEEE extended real
 ;
-;		DUP :	Frequency DUP( Value )
+;		DUP :	<Frequency> DUP( <Value> )
 ;				Eg: 20 DUP(0)		=> 0 0 0 0 0 0 0... 0
 ;
 ;		* Hexadecimal value starting with alphabet must be prefix with 0
@@ -302,7 +302,7 @@ TITLE Operator Cheat Sheet
 ;
 ;	TEST - Performs implied AND operation, but doesn't change destination operand
 ;		   Flags are manipulated, so we can 'test' if individual bits in an operaand are set via aid of flags (Especially Zero Flag)
-;		+ TEST destination, source
+;		+ TEST destination, source 
 ;	
 ;		Flag - Clear Overflow, Carry
 ;			   Mofifies Sign, Zero, Parity
@@ -431,4 +431,130 @@ TITLE Operator Cheat Sheet
 ;			statements
 ;		  .ENDW
 ;
+
+
+
+
+
+;=================================================
+; Chapter 7: Integer Arithmetic
+;=================================================
+; 
+; ========================
+; Bitwise Instructions
+; ========================
+;
+;	>	SHL <destination>, <count> - Performs bitwise shift left, lowest bit filled with 0
+;	>	SHR <destination>, <count> - Performs bitwise shift right, highest bit filled with 0
+;	>	SAL <destination>, <count> - Identical to SHL
+;	>	SAR <destination>, <count> - Performs bitwise shift right, highest bit is duplicate of sign bit
+;	>	ROL <destination>, <count> - Rotate left, shifting each bit to left, highest bit goes to lowest bit and also carry flag.
+;	>	ROR <destination>, <count> - Rotate right, shifting each bit to right, lowest bit goes to highest bit and also carry flag
+;	>	RCL <destination>, <count> - Rotate Carry right, shift each bit to left, copy carry flag to LSB, copy MSB into carry flag
+;	>	RCR <destination>, <count> - Rotate Carry left, shift each bit to right, copy carry flag into MSB, copy LSB into carry flag
+;	>	SHLD <destination>, <source>, <count> - Shift left count times. Rightmost bits are filled with highest bits of source operand
+;	>	SHRD <destination>, <source>, <count> - Shift right count times. Leftmost bits are filled with lowest bits of source operand
+;
+;	Left shifting essentially performs multiplication of 2
+;	Right shifting essentially performs division of 2
+;	Using SAR, division by 2 can be done on signed integers
+;	
+;	Using Left Shifting or Right shift, each bit can be extracted through the help of carry flag
+;
+;
+; =====================================
+;	Multiplication and Division
+; =====================================
+;	>	MUL <multiplier> - (Unsigned Multiply) on AL, AX, or EAX based on size of operand
+;
+;		MULTIPLICAND | MULTIPLIER | PRODUCT
+;		AL			 | r/m8		  | AX
+;		AX			 | r/m16	  | DX:AX
+;		EAX			 | r/m32	  | EDX:EAX
+;
+;	>	IMUL <multiplier> - (Signed Multiply) - Same as MUL, but preserves the sign of product
+;	
+;	>	DIV <divisor> - (Unsigned Divide)
+;
+;		DIVIDEND | DIVISOR | QUOTIENT | REMAINDER
+;		AX		 | r/m8	   | AL		  | AH
+;		DX:AX	 | r/m16   | AX		  | DX
+;		EDX:EAX  | r/m32   | EAX	  | EDX
+;
+;	>	CBW - (Convert Byte to Word) - Extends sign bit of AL into AH.
+;	>	CWD - (Convert Word to Doubleword) - Extends sign bit of AX into DX
+;	>	CDQ - (Convert Dword to Quadword) - Extends sign bit of EAX into EDX
+;
+;	>	IDIV <divisor> - (Signed Division). One must sign extend before divide
+;	
+;		8 bit dividend > Call CBW
+;		16 bit dividend > Call CWD
+;		21 bit dividend > Call CDQ
+;
+;
+; ======================================
+;	Extended Addition and Subtraction
+; ======================================
+;
+;	>	ADC <destination>, <operand> - (Add with carry) Adds destination with operand, but also add carry flag
+;	>	SBB <destination>, <operand> - (Substraction with Borrow) Substracts destination with operand and carry flag
+;	
+;
+;
+; ======================================
+;	ASCII and Packed Decimal Arithmetic
+; ======================================
+;
+; Some instructions provided in x86 are designed to perform arithmetics directly from ASCII digits!
+; First,
+;	> From ASCII codes, digit '0' to '9' represented in HEX values are 30h to 39h respectively
+;	  This means by performing AND with 00001111b (Eliminating the high 4 bits), I will get the correct digit value
+; 
+; REPRESENTATIONS:
+;
+; ASCII Decimal - Digits are stored in ASCII code. Eg: '1' stored as hexadecimal 31h
+;				  In binary, the high 4 bit are always 0011b (3h), and lower is simply the value itself.
+;
+;					Eg: '2' - 32h
+;						'9' - 39h
+;
+; Unpacked Decimal - After AND the ASCII code digit with 00001111b, you will get the digit value stored in a byte (8 bits),
+;					where the high 4 bits is always 0. This is unpacked decimal - A digit stored in a byte
+;
+;					Eg: 2 - 02h - 0000 0010
+;						9 - 09h - 0000 1001
+;
+; Packed Deciaml - TWO digits are stored in a byte, each occupying 4 bits. You can view hexidecimal as decimal
+;
+;					Eg: 32 - 32h - 0011 0010
+;						99 - 99h - 1001 1001
+;
+;	=============================================================================
+;	NOTE: ALL THE FOLLOWING INSTRUCTIONS REQUIRE YOU TO CLEAR AH FIRST TO ALL 0
+;
+;	> AAA - (ASCII adjust after addition) Called after adding two digits in ASCII REPRESENTATION in AL
+;			Results in UNPACKED Decimal Representation in AX
+;
+;	> AAS - (ASCII adjust after subtraction) Called after substracting two digit in UNPACKED DECIMAL REPRESENTATION in AL
+;			Results in UNPACKED Decimal Representation in AX
+;
+;	> AAM - (ASCII adjust after multiplication) Called after multiplying two digits in UNPACKED DECIMAL REPRESENTATION in AL
+;			Results in UNPACKED Decimal Representation
+;
+;	> AAD - (ASCII adjust before division) Called BEFORE dividing up to 2 digits in AX (Eg: 0307h as 37d) in UNPACKED DECIMAL REPRESENTATION
+;			Results in UNPACKED Decimal Representation
+;			Quotient in AL, Remainder in AH
+;
+;	> DAA - (Decimal Adjust After Addition) Called After adding digits in PACKED DECIMAL REPRESENTATION in AL
+;			Results in PACKED Decimal Representation
+;
+;	> DAS - (Deciaml Adjust After Subtraction) Called After subtracting digits in PACKED DECIMAL REPRESENTATION in AL
+;			Results in PACKED Decimal Representation
+;	
+
+
+
+
+
+
 END
