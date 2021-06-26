@@ -28,7 +28,7 @@
 TITLE Main Program
 
 INCLUDE Irvine32.inc
-INCLUDE exercise_chap7.inc
+INCLUDE exercise_chap8.inc
 ;To include external assembly, you must include the inc file
 
 .data
@@ -39,10 +39,8 @@ INCLUDE exercise_chap7.inc
 
 .code
 main PROC
-	;Codes...
+	CALL exercise8_5
 
-	CALL exercise7_7
-    
     exit
 main ENDP
 END main

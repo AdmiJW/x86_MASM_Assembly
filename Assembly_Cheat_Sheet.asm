@@ -557,4 +557,86 @@ TITLE Operator Cheat Sheet
 
 
 
+
+
+
+;========================================================
+; Chapter 8: Advanced Procedures
+;========================================================
+;
+;
+; ====================================
+;	Local Variables
+; ====================================
+;	
+; All the variables declared in the data segment (.data) are called
+; static global variables. They exist as long as the program is still running.
+;
+; Local variables on the other hand, should only exist within a single procedure.
+; Once the procedure is returned, the local variable shall be destroyed as well.
+;
+; In Assembly language, local variables are created on the runtime stack, and popped once
+; the procedure has finished its job, thus releasing the stack memory.
+;
+; To declare a local variable, we use the LOCAL directive immediately after the PROC directive
+;
+;			myProc PROC
+;				LOCAL <varlist>
+;
+; where <varlist> is a list of variables separated by comma, taking the form <label>:<type>, like:
+;
+;			myProc PROC
+;				LOCAL var1:BYTE,			;var1 of type BYTE
+;					  var2:DWORD,			;var2 of type DWORD
+;					  pArr:PTR WORD			;pArr is a memory address of type WORD
+;					  arr[10]:DWORD			;An array of size 10, type DWORD
+;
+; When deassembled, the space used by local variables are reserved and stored in the stack.
+; through a series of push and pop operations
+;
+; Be sure to allocate adequate stack space before assembling the program using directive:
+;			.stack <memsize in bytes>
+; In Irvine32.inc, it is already reserved 4096(4MB) of stack memory:
+;			.stack 4096
+;
+;
+; =================================
+;	Stack Parameters
+; =================================
+;
+; There are two types of procedure parameters:
+;	>	Register parameters - Pass in arguments in specified register before calling procedure
+;	>	Stack parameters - Push arguments to stack before calling the procedure
+;
+; In MASM, we can specify the stack parameters for proceures:
+;		myProc PROC, <param1>, <param2>...
+; which <param1>, <param2>... takes the form:
+;		paramName:type
+; like:
+;		myProc PROC, num:DWORD, arr:PTR DWORD
+;
+;
+; Conveniently, we call the procedure with stack parameters, using INVOKE:
+;		
+;		INVOKE myProc, <param1>, <param2>
+; Like:
+;		INVOKE myProc, EAX, ADDR myList
+;
+; * ADDR passes a pointer when used with INVOKE
+; * OFFSET works similar to ADDR, but fails with Local variables. OFFSET works with global static variables only
+; 
+; Like in C++, to call a proceure before defining it, we need a prototype.
+; It is simply the procedure name followed by PROTO directive
+;	
+;		<procName> PROTO, <param1>, <param2>...
+;		
+;
+; Recall how we have been using MOV to copy data? When we INVOKE without using ADDR,
+; we are always passing by value. Manipulating values of local variable will not be reflecte
+; in actual ata itself.
+; However, using ADDR and PTR combination, we pass by reference, where changing the value mutates
+; the original data itself.
+
+
+
 END
